@@ -39,7 +39,8 @@ export async function POST(req) {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "HTTP-Referer": "http://localhost:3000",
+          "HTTP-Referer":
+            process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
           "X-Title": "Yatra Career Navigator",
         },
         body: JSON.stringify({
