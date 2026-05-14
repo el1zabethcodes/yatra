@@ -1,8 +1,10 @@
 /**
- * TEST ACCOUNTS DATABASE
- * See also: docs/test-accounts.md for the full reference sheet
+ * Local JS database for users.
+ * This file stores initial test accounts and keeps new signups in localStorage.
  */
-export const TEST_USERS = [
+const STORAGE_KEY = "yatra_users";
+
+const DEFAULT_USERS = [
   {
     id: "usr_001",
     name: "Arjun Sharma",
@@ -56,12 +58,41 @@ export const TEST_USERS = [
   },
 ];
 
+let users = DEFAULT_USERS.slice();
+
+function loadUsers() {
+  if (typeof window === "undefined") return users;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      users = parsed;
+    }
+  } catch {
+    users = DEFAULT_USERS.slice();
+  }
+  return users;
+}
+
+function saveUsers() {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+  } catch {}
+}
+
+/**
+ * Test accounts for the demo UI only.
+ */
+export const TEST_USERS = DEFAULT_USERS;
+
 /**
  * Authenticate a user by email + password.
  * Returns the user object (without password) or null.
  */
 export function authenticate(email, password) {
-  const user = TEST_USERS.find(
+  loadUsers();
+  const user = users.find(
     (u) =>
       u.email.toLowerCase() === email.toLowerCase().trim() &&
       u.password === password
@@ -71,11 +102,44 @@ export function authenticate(email, password) {
   return safe;
 }
 
+export function getUserByEmail(email) {
+  loadUsers();
+  return users.find(
+    (u) => u.email.toLowerCase() === email.toLowerCase().trim()) || null;
+}
+
+export function registerUser({ name, email, password }) {
+  loadUsers();
+  if (getUserByEmail(email)) return null;
+  const newUser = {
+    id: `usr_${Date.now()}`,
+    name: name.trim(),
+    email: email.toLowerCase().trim(),
+    password,
+    birthDate: "",
+    goal: "Start my Yatra journey",
+    bio: "New member of Yatra",
+    subscription: "Explorer",
+    memberSince: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+    avatar: "/assets/3d_prof_anf.png",
+    progress: 0,
+    streak: 0,
+    skills: 0,
+    pearls: 0,
+    radarScores: { Frontend: 0.12, Backend: 0.08, Logic: 0.14, Design: 0.10, SoftSkills: 0.10 },
+  };
+  users.push(newUser);
+  saveUsers();
+  const { password: _pw, ...safe } = newUser;
+  return safe;
+}
+
 /**
  * Find user by id (for session restore).
  */
 export function getUserById(id) {
-  const user = TEST_USERS.find((u) => u.id === id);
+  loadUsers();
+  const user = users.find((u) => u.id === id);
   if (!user) return null;
   const { password: _pw, ...safe } = user;
   return safe;

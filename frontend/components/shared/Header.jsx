@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const navItems = [
-  { label: "About", href: "#about" },
   { label: "Features", href: "/features" },
   { label: "Pricing", href: "/pricing" },
 ];
@@ -37,13 +36,13 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Dashboard button */}
+        {/* Log in button */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/login"
             className="px-5 py-2.5 rounded-full bg-[#1B3B18] text-[#FFF9E3] text-sm font-black uppercase tracking-wider hover:bg-[#2D5A27] transition-colors shadow-md"
           >
-            Dashboard
+            Log in
           </Link>
         </div>
 

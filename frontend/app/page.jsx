@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import Header from "@/components/shared/Header";
 import { motion } from "framer-motion";
 
 /* ─── Fade-in helper ─── */
@@ -94,86 +95,7 @@ export default function HomePage() {
         }}
       />
 
-      {/* ── Plants — left ── */}
-      <div className="fixed left-0 top-0 w-[160px] xl:w-[210px] h-full pointer-events-none z-10 hidden lg:block">
-        <Image
-          src="/assets/main/plants_back.png"
-          alt=""
-          fill
-          className="object-cover object-right"
-          sizes="210px"
-        />
-      </div>
-
-      {/* ── Plants — right (mirrored) ── */}
-      <div className="fixed right-0 top-0 w-[160px] xl:w-[210px] h-full pointer-events-none z-10 hidden lg:block scale-x-[-1]">
-        <Image
-          src="/assets/main/plants_back.png"
-          alt=""
-          fill
-          className="object-cover object-right"
-          sizes="210px"
-        />
-      </div>
-
-      {/* ══════════════════════════════════════════════
-          NAV — narrow strip
-      ══════════════════════════════════════════════ */}
-      <div className="relative z-20 max-w-5xl mx-auto px-6">
-        <motion.header
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center justify-between py-7"
-        >
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 shrink-0">
-              <Image
-                src="/assets/main/logo.png"
-                alt="Yatra"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-            <span
-              className="text-2xl font-black tracking-tight"
-              style={{ color: "#2D2D2D" }}
-            >
-              Yatra
-            </span>
-          </div>
-
-          <nav
-            className="flex items-center gap-6 text-sm font-semibold"
-            style={{ color: "#2D2D2D" }}
-          >
-            <Link
-              href="/features"
-              className="opacity-60 hover:opacity-100 transition-opacity"
-            >
-              Features
-            </Link>
-            <Link
-              href="/pricing"
-              className="opacity-60 hover:opacity-100 transition-opacity"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/login"
-              className="px-5 py-2 rounded-full font-black uppercase tracking-wider text-xs transition-all hover:opacity-90"
-              style={{
-                background: "#6B7D56",
-                color: "#E6E4C5",
-                boxShadow: "0 3px 0 #4a5a3a, 0 5px 10px rgba(74,90,58,0.25)",
-              }}
-            >
-              Log in
-            </Link>
-          </nav>
-        </motion.header>
-      </div>
+      <Header />
 
       {/* ══════════════════════════════════════════════
           HERO — wide layout
@@ -383,7 +305,7 @@ export default function HomePage() {
       {/* ── SHIP FOOTER IMAGE ── */}
       <div className="relative z-20 w-full mt-4">
         <Image
-          src="/assets/main/ship_in_sea.png"
+          src="/assets/main/ship_in_sea_nev.png"
           alt="A ship sailing into the horizon"
           width={1440}
           height={600}

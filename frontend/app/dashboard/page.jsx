@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -151,10 +151,11 @@ export default function DashboardPage() {
   const ActiveComponent = TABS[activeTab];
 
   /* Redirect to login if not authenticated */
-  if (!loading && !user) {
-    router.replace("/login");
-    return null;
-  }
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login");
+    }
+  }, [loading, user, router]);
 
   /* Loading state */
   if (loading) {
@@ -167,6 +168,11 @@ export default function DashboardPage() {
         />
       </div>
     );
+  }
+
+  /* If not authenticated, don't render anything */
+  if (!user) {
+    return null;
   }
 
   return (

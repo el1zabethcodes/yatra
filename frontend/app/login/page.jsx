@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Github, Mail, Linkedin, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
-import { authenticate, TEST_USERS } from "@/lib/users";
+import { authenticate, registerUser, TEST_USERS } from "@/lib/users";
 
 const inputCls =
   "w-full px-5 py-3.5 rounded-2xl bg-white/50 border border-white/60 text-[#1B3B18] font-medium placeholder:text-[#1B3B18]/30 focus:outline-none focus:ring-2 focus:ring-[#1B3B18]/30 transition";
@@ -30,6 +30,7 @@ export default function LoginPage() {
   const [suEmail, setSuEmail]       = useState("");
   const [suPass,  setSuPass]        = useState("");
   const [showSu,  setShowSu]        = useState(false);
+  const [suError, setSuError]       = useState("");
   const [suSuccess, setSuSuccess]   = useState(false);
 
   /* ── Sign In handler ── */
@@ -54,13 +55,24 @@ export default function LoginPage() {
   /* ── Sign Up handler (demo: just show success + hint) ── */
   const handleSignUp = async (e) => {
     e.preventDefault();
+    setSuError("");
+    setSuSuccess(false);
+
     await new Promise((r) => setTimeout(r, 600));
+
+    const newUser = registerUser({ name: suName, email: suEmail, password: suPass });
+    if (!newUser) {
+      setSuError("This email is already registered. Try signing in or use a different email.");
+      return;
+    }
+
     setSuSuccess(true);
     setTimeout(() => {
       setTab("signin");
-      setSiEmail(suEmail);
+      setSiEmail(newUser.email);
+      setSiPass("");
       setSuSuccess(false);
-    }, 2000);
+    }, 1600);
   };
 
   return (
@@ -208,6 +220,12 @@ export default function LoginPage() {
                     </div>
                     <p className="mt-2 text-[10px] text-[#1B3B18]/40 font-medium">Minimum 8 characters</p>
                   </div>
+                  {suError && (
+                    <div className="px-4 py-3 rounded-2xl text-sm font-semibold text-[#D35400]"
+                      style={{ background: "rgba(211,84,0,0.08)", border: "1px solid rgba(211,84,0,0.18)" }}>
+                      {suError}
+                    </div>
+                  )}
                   <button type="submit"
                     className="w-full py-4 rounded-2xl bg-[#D35400] text-[#FFF9E3] font-black uppercase tracking-widest text-sm shadow-lg shadow-[#D35400]/20 hover:bg-[#b04600] transition-colors mt-2">
                     Create Account
