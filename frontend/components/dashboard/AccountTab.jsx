@@ -207,7 +207,7 @@ function PasswordReset() {
 }
 
 /* ── Main export ── */
-export default function AccountTab() {
+export default function AccountTab({ setActiveTab }) {
   const { user, logout } = useAuth();
   const router = useRouter();
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Github, Linkedin, FileText, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 
 const glass = {
   background: "rgba(255,255,255,0.28)",
@@ -14,14 +14,15 @@ const glass = {
     "0 8px 40px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.65)",
 };
 
-export default function TentacleGrab() {
-  const [url, setUrl] = useState("");
+export default function TentacleGrab({ onGrab }) {
   const [grabbed, setGrabbed] = useState(false);
 
   const handleGrab = () => {
-    if (!url.trim()) return;
     setGrabbed(true);
-    setTimeout(() => setGrabbed(false), 2000);
+    setTimeout(() => {
+      setGrabbed(false);
+      if (onGrab) onGrab();
+    }, 500);
   };
 
   return (
@@ -76,25 +77,13 @@ export default function TentacleGrab() {
             or GitHub URL and let Kavi do the rest.
           </p>
 
-          {/* URL input */}
-          <div className="flex gap-2 mb-4">
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://github.com/yourname or linkedin.com/in/…"
-              className="flex-1 px-4 py-3 rounded-2xl text-sm font-medium text-[#1B3B18] placeholder:text-[#1B3B18]/30 focus:outline-none focus:ring-2 focus:ring-[#D35400]/40 transition"
-              style={{
-                background: "rgba(255,255,255,0.55)",
-                border: "1px solid rgba(255,255,255,0.70)",
-              }}
-              aria-label="LinkedIn or GitHub URL"
-            />
+          {/* Grab button */}
+          <div>
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
               onClick={handleGrab}
-              className="px-5 py-3 rounded-2xl font-black text-sm uppercase tracking-wider text-white transition-colors shrink-0"
+              className="px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-wider text-white transition-colors"
               style={{
                 background: grabbed ? "#2D5A27" : "#D35400",
                 boxShadow: grabbed
@@ -104,34 +93,6 @@ export default function TentacleGrab() {
             >
               {grabbed ? "Grabbed ✓" : "Grab It"}
             </motion.button>
-          </div>
-
-          {/* Quick action icons */}
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#1B3B18]/35">
-              Or import via
-            </span>
-            {[
-              { icon: FileText, label: "Upload PDF" },
-              { icon: Github,   label: "GitHub Sync" },
-              { icon: Linkedin, label: "LinkedIn" },
-            ].map(({ icon: Icon, label }) => (
-              <motion.button
-                key={label}
-                whileHover={{ scale: 1.08, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                title={label}
-                aria-label={label}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold text-[#1B3B18]/60 hover:text-[#1B3B18] transition-colors"
-                style={{
-                  background: "rgba(255,255,255,0.45)",
-                  border: "1px solid rgba(255,255,255,0.55)",
-                }}
-              >
-                <Icon size={14} />
-                <span className="hidden sm:inline">{label}</span>
-              </motion.button>
-            ))}
           </div>
         </div>
       </div>

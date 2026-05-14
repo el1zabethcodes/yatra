@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Map, Anchor } from "lucide-react";
 
-export default function RoadmapTab() {
+export default function RoadmapTab({ setActiveTab }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}

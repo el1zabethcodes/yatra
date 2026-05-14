@@ -196,8 +196,23 @@ export default function ResumeAnalyzer() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resumeText: text }),
       });
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error ?? "Unknown error");
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error("Failed to parse response JSON:", jsonErr);
+        throw new Error("Server returned invalid response. Please try again.");
+      }
+      
+      if (!res.ok || data.error) {
+        throw new Error(data.error ?? "Unknown error");
+      }
+      
+      if (!data.report) {
+        throw new Error("No analysis report received. Please try again.");
+      }
+      
       setReport(data.report);
     } catch (err) {
       setError(err.message ?? "Something went wrong. Try again.");

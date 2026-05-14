@@ -204,11 +204,6 @@ export default function DashboardPage() {
         filter: "blur(70px)",
       }} />
 
-      {/* ── Header ── */}
-      <div className="relative z-30">
-        <DashboardHeader />
-      </div>
-
       {/* ── Main content ── */}
       <main className="relative z-10 max-w-3xl mx-auto px-4 py-8 md:px-8 md:py-10 pb-28">
         <AnimatePresence mode="wait">
@@ -219,7 +214,7 @@ export default function DashboardPage() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
           >
-            <ActiveComponent />
+            <ActiveComponent setActiveTab={setActiveTab} />
           </motion.div>
         </AnimatePresence>
       </main>

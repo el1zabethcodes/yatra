@@ -75,7 +75,7 @@ function StatCard({ icon: Icon, label, value, color, delay }) {
   );
 }
 
-export default function DashboardTab() {
+export default function DashboardTab({ setActiveTab }) {
   const { user } = useAuth();
   const firstName = user?.name?.split(" ")[0] ?? "Explorer";
   const progress  = user?.progress ?? 45;
@@ -111,7 +111,7 @@ export default function DashboardTab() {
 
       {/* Tentacle Grab hero */}
       <Fade delay={0.2}>
-        <TentacleGrab />
+        <TentacleGrab onGrab={() => setActiveTab("mentor")} />
       </Fade>
 
       {/* Bottom two-column grid */}

@@ -49,7 +49,18 @@ scoreLabel mapping: 1-30 = "Lost at Sea", 31-50 = "Beachcomber", 51-65 = "Wayfin
 
 export async function POST(req) {
   try {
-    const { resumeText } = await req.json();
+    let reqBody;
+    try {
+      reqBody = await req.json();
+    } catch (err) {
+      console.error("Invalid JSON in request:", err);
+      return NextResponse.json(
+        { error: "Invalid request format." },
+        { status: 400 }
+      );
+    }
+
+    const { resumeText } = reqBody;
 
     if (!resumeText || typeof resumeText !== "string" || resumeText.trim().length < 50) {
       return NextResponse.json(
@@ -58,41 +69,83 @@ export async function POST(req) {
       );
     }
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: `Here is my resume. Please analyse it thoroughly and return the JSON report:\n\n${resumeText.slice(0, 8000)}`,
-        },
-      ],
-      model: "llama-3.3-70b-versatile",
-      temperature: 0.3,
-      max_completion_tokens: 2048,
-      stream: false,
-    });
+    let completion;
+    try {
+      completion = await groq.chat.completions.create({
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          {
+            role: "user",
+            content: `Here is my resume. Please analyse it thoroughly and return the JSON report:\n\n${resumeText.slice(0, 8000)}`,
+          },
+        ],
+        model: "llama-3.3-70b-versatile",
+        temperature: 0.3,
+        max_completion_tokens: 2048,
+        stream: false,
+      });
+    } catch (groqErr) {
+      console.error("Groq API error:", groqErr.message || groqErr);
+      if (groqErr.message?.includes("API key")) {
+        return NextResponse.json(
+          { error: "API configuration error. Please contact support." },
+          { status: 503 }
+        );
+      }
+      return NextResponse.json(
+        { error: "AI service temporarily unavailable. Please try again in a moment." },
+        { status: 503 }
+      );
+    }
 
     const rawText = completion.choices[0]?.message?.content ?? "";
+
+    if (!rawText || rawText.trim().length === 0) {
+      console.error("Empty response from Groq");
+      return NextResponse.json(
+        { error: "Kavi went silent. Please try again." },
+        { status: 500 }
+      );
+    }
 
     const cleaned = rawText
       .replace(/^```(?:json)?\s*/i, "")
       .replace(/\s*```$/, "")
       .trim();
 
-    let report;
-    try {
-      report = JSON.parse(cleaned);
-    } catch {
-      console.error("Failed to parse resume JSON:", rawText);
+    if (!cleaned || cleaned.length === 0) {
+      console.error("Cleaned response is empty");
       return NextResponse.json(
         { error: "Could not parse analysis. Please try again." },
         { status: 500 }
       );
     }
 
+    let report;
+    try {
+      report = JSON.parse(cleaned);
+    } catch (parseErr) {
+      console.error("Failed to parse resume JSON:");
+      console.error("Raw response:", rawText.substring(0, 300));
+      console.error("Cleaned response:", cleaned.substring(0, 300));
+      console.error("Parse error:", parseErr.message);
+      return NextResponse.json(
+        { error: "Resume analysis returned invalid data. Please try with a clearer resume." },
+        { status: 500 }
+      );
+    }
+
+    if (!report || typeof report !== "object") {
+      console.error("Report is not a valid object");
+      return NextResponse.json(
+        { error: "Analysis returned invalid data structure." },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({ report });
   } catch (error) {
-    console.error("Groq resume error:", error);
+    console.error("Groq resume error:", error.message || error);
     return NextResponse.json(
       { error: "The currents are too strong. Try again." },
       { status: 500 }

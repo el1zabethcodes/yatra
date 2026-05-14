@@ -203,7 +203,7 @@ function MentorChat() {
 /* ══════════════════════════════════════════
    MAIN EXPORT
 ══════════════════════════════════════════ */
-export default function MentorTab() {
+export default function MentorTab({ setActiveTab }) {
   const [view, setView] = useState("chat"); // "chat" | "resume"
 
   return (
