@@ -6,11 +6,13 @@ import BottomNavBar  from "@/components/dashboard/BottomNavBar";
 import DashboardTab  from "@/components/dashboard/DashboardTab";
 import RoadmapTab    from "@/components/dashboard/RoadmapTab";
 import MentorTab     from "@/components/dashboard/MentorTab";
+import AccountTab    from "@/components/dashboard/AccountTab";
 
 const TABS = {
   dashboard: DashboardTab,
   roadmap:   RoadmapTab,
   mentor:    MentorTab,
+  account:   AccountTab,
 };
 
 export default function DashboardPage() {

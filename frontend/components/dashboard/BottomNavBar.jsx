@@ -1,12 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { LayoutDashboard, Map, MessageCircle } from "lucide-react";
+import { LayoutDashboard, Map, MessageCircle, UserCircle } from "lucide-react";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, tab: "dashboard" },
   { label: "Roadmap",   icon: Map,             tab: "roadmap"   },
   { label: "Mentor",    icon: MessageCircle,   tab: "mentor"    },
+  { label: "Account",   icon: UserCircle,      tab: "account"   },
 ];
 
 const LABEL_WIDTH = 80;
