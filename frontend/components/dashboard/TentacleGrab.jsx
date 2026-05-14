@@ -56,7 +56,7 @@ export default function TentacleGrab({ onGrab }) {
           style={{ filter: "drop-shadow(0 12px 24px rgba(211,84,0,0.20))" }}
         >
           <Image
-            src="/assets/осьминог-Photoroom.png"
+            src="/assets/dashboard/tentacle_grab.png"
             alt="Kavi the octopus"
             fill
             className="object-contain"
