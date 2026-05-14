@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Compass, Shell, TrendingUp } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 import TentacleGrab from "./TentacleGrab";
 import SkillRadar from "./SkillRadar";
 import SmallWins from "./SmallWins";
@@ -75,30 +76,37 @@ function StatCard({ icon: Icon, label, value, color, delay }) {
 }
 
 export default function DashboardTab() {
+  const { user } = useAuth();
+  const firstName = user?.name?.split(" ")[0] ?? "Explorer";
+  const progress  = user?.progress ?? 45;
+  const streak    = user?.streak   ?? 0;
+  const skills    = user?.skills   ?? 0;
+  const pearls    = user?.pearls   ?? 0;
+
   return (
     <div className="space-y-6">
       {/* Welcome header */}
       <Fade>
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-[#1B3B18] leading-tight">
-            Welcome back, <span className="text-[#D35400]">Arjun</span>.
+            Welcome back, <span className="text-[#D35400]">{firstName}</span>.
           </h1>
           <p className="text-sm text-[#1B3B18]/55 font-medium mt-1">
             Your journey is{" "}
-            <span className="text-[#2D5A27] font-black">45% complete</span>.
+            <span className="text-[#2D5A27] font-black">{progress}% complete</span>.
             Keep sailing.
           </p>
           <div className="mt-3 max-w-sm">
-            <ProgressBar value={45} />
+            <ProgressBar value={progress} />
           </div>
         </div>
       </Fade>
 
       {/* Stat row */}
       <div className="grid grid-cols-3 gap-3">
-        <StatCard icon={TrendingUp} label="Streak"    value="12 days"  color="#D35400" delay={0.1} />
-        <StatCard icon={Compass}    label="Skills"    value="5 mapped" color="#2D5A27" delay={0.18} />
-        <StatCard icon={Shell}      label="Pearls"    value="8 earned" color="#1B3B18" delay={0.26} />
+        <StatCard icon={TrendingUp} label="Streak"    value={`${streak} days`}   color="#D35400" delay={0.1} />
+        <StatCard icon={Compass}    label="Skills"    value={`${skills} mapped`} color="#2D5A27" delay={0.18} />
+        <StatCard icon={Shell}      label="Pearls"    value={`${pearls} earned`} color="#1B3B18" delay={0.26} />
       </div>
 
       {/* Tentacle Grab hero */}
@@ -120,7 +128,7 @@ export default function DashboardTab() {
                 Skill Radar
               </span>
             </div>
-            <SkillRadar />
+            <SkillRadar scores={user?.radarScores} />
           </div>
         </Fade>
 

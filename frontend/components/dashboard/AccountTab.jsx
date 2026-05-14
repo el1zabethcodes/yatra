@@ -1,29 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Mail,
-  User,
-  Calendar,
-  Target,
-  Crown,
-  KeyRound,
-  Eye,
-  EyeOff,
-  CheckCircle2,
-  ChevronRight,
+  Mail, User, Calendar, Target, Crown, KeyRound,
+  Eye, EyeOff, CheckCircle2, ChevronRight, LogOut,
 } from "lucide-react";
-
-/* ── Mock user data — swap with real auth ── */
-const USER = {
-  name:         "Arjun Sharma",
-  email:        "arjun.sharma@gmail.com",
-  birthDate:    "March 12, 2003",
-  goal:         "Land a Frontend Engineer role at a product company",
-  subscription: "Explorer",          // "Explorer" | "Navigator" | "Captain"
-  memberSince:  "January 2025",
-};
+import { useAuth } from "@/lib/AuthContext";
 
 const SUBSCRIPTION_COLORS = {
   Explorer:  { bg: "rgba(27,59,24,0.10)",  border: "rgba(27,59,24,0.20)",  text: "#1B3B18" },
@@ -224,7 +208,15 @@ function PasswordReset() {
 
 /* ── Main export ── */
 export default function AccountTab() {
-  const sub = SUBSCRIPTION_COLORS[USER.subscription] ?? SUBSCRIPTION_COLORS.Explorer;
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const sub = SUBSCRIPTION_COLORS[user?.subscription] ?? SUBSCRIPTION_COLORS.Explorer;
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
 
   return (
     <motion.div
@@ -234,16 +226,32 @@ export default function AccountTab() {
       className="space-y-5"
     >
       {/* Header */}
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.35em] text-[#D35400] mb-1">
-          Personal Oasis
-        </p>
-        <h1 className="text-2xl md:text-3xl font-black text-[#1B3B18]">
-          My Account
-        </h1>
-        <p className="text-sm text-[#1B3B18]/50 font-medium mt-0.5">
-          Member since {USER.memberSince}
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-[#D35400] mb-1">
+            Personal Oasis
+          </p>
+          <h1 className="text-2xl md:text-3xl font-black text-[#1B3B18]">
+            My Account
+          </h1>
+          <p className="text-sm text-[#1B3B18]/50 font-medium mt-0.5">
+            Member since {user?.memberSince ?? "—"}
+          </p>
+        </div>
+        <motion.button
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={handleLogout}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all"
+          style={{
+            background: "rgba(211,84,0,0.10)",
+            border: "1px solid rgba(211,84,0,0.20)",
+            color: "#D35400",
+          }}
+        >
+          <LogOut size={13} />
+          Log out
+        </motion.button>
       </div>
 
       {/* Subscription badge */}
@@ -264,7 +272,7 @@ export default function AccountTab() {
             Subscription Plan
           </p>
           <p className="text-base font-black" style={{ color: sub.text }}>
-            {USER.subscription} Plan
+            {user?.subscription ?? "Explorer"} Plan
           </p>
         </div>
         <motion.button
@@ -282,18 +290,14 @@ export default function AccountTab() {
       </motion.div>
 
       {/* Info grid */}
-      <div
-        className="rounded-[28px] p-5 space-y-2.5"
-        style={glass}
-      >
+      <div className="rounded-[28px] p-5 space-y-2.5" style={glass}>
         <p className="text-[10px] font-black uppercase tracking-widest text-[#1B3B18]/35 mb-3">
           Profile Details
         </p>
-
-        <InfoRow icon={User}     label="Full Name"   value={USER.name}      accent="#1B3B18" />
-        <InfoRow icon={Mail}     label="Email"       value={USER.email}     accent="#D35400" />
-        <InfoRow icon={Calendar} label="Date of Birth" value={USER.birthDate} accent="#2D5A27" />
-        <InfoRow icon={Target}   label="Current Goal" value={USER.goal}     accent="#D35400" />
+        <InfoRow icon={User}     label="Full Name"     value={user?.name      ?? "—"} accent="#1B3B18" />
+        <InfoRow icon={Mail}     label="Email"         value={user?.email     ?? "—"} accent="#D35400" />
+        <InfoRow icon={Calendar} label="Date of Birth" value={user?.birthDate ?? "—"} accent="#2D5A27" />
+        <InfoRow icon={Target}   label="Current Goal"  value={user?.goal      ?? "—"} accent="#D35400" />
       </div>
 
       {/* Password reset */}

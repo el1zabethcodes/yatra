@@ -1,4 +1,5 @@
 import "./globals.css";
+import { AuthProvider } from "@/lib/AuthContext";
 
 export const metadata = {
   title: "Yatra",
@@ -8,7 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 import BottomNavBar  from "@/components/dashboard/BottomNavBar";
 import DashboardTab  from "@/components/dashboard/DashboardTab";
 import RoadmapTab    from "@/components/dashboard/RoadmapTab";
@@ -25,6 +27,10 @@ const NAV_LINKS = [
 /* ── Dashboard-specific header ── */
 function DashboardHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => { logout(); router.push("/login"); };
 
   return (
     <header
@@ -70,8 +76,19 @@ function DashboardHeader() {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#2D5A27] animate-pulse" />
-            Arjun Sharma
+            {user?.name ?? "Explorer"}
           </div>
+          <button
+            onClick={handleLogout}
+            className="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all hover:scale-105"
+            style={{
+              background: "rgba(211,84,0,0.10)",
+              border: "1px solid rgba(211,84,0,0.20)",
+              color: "#D35400",
+            }}
+          >
+            Log out
+          </button>
         </div>
 
         {/* Mobile burger */}
@@ -108,8 +125,14 @@ function DashboardHeader() {
                 </Link>
               ))}
               <div className="pt-1 border-t border-white/30 text-xs font-black text-[#2D5A27]">
-                Arjun Sharma · Explorer Plan
+                {user?.name ?? "Explorer"} · {user?.subscription ?? "Explorer"} Plan
               </div>
+              <button
+                onClick={handleLogout}
+                className="text-xs font-bold text-[#D35400] hover:underline text-left"
+              >
+                Log out
+              </button>
             </div>
           </motion.div>
         )}
@@ -123,7 +146,28 @@ function DashboardHeader() {
 ══════════════════════════════════════════ */
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const ActiveComponent = TABS[activeTab];
+
+  /* Redirect to login if not authenticated */
+  if (!loading && !user) {
+    router.replace("/login");
+    return null;
+  }
+
+  /* Loading state */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#DFE0BF" }}>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-2 border-[#1B3B18]/20 border-t-[#D35400] rounded-full"
+        />
+      </div>
+    );
+  }
 
   return (
     <div

@@ -2,11 +2,11 @@
 
 import { motion } from "framer-motion";
 
-const SKILLS = [
-  { label: "Frontend",  value: 0.72 },
-  { label: "Backend",   value: 0.48 },
-  { label: "Logic",     value: 0.63 },
-  { label: "Design",    value: 0.55 },
+const DEFAULT_SKILLS = [
+  { label: "Frontend",    value: 0.72 },
+  { label: "Backend",     value: 0.48 },
+  { label: "Logic",       value: 0.63 },
+  { label: "Design",      value: 0.55 },
   { label: "Soft Skills", value: 0.80 },
 ];
 
@@ -33,7 +33,11 @@ function buildPolygon(values, maxR) {
     .join(" ");
 }
 
-export default function SkillRadar() {
+export default function SkillRadar({ scores }) {
+  const SKILLS = scores
+    ? Object.entries(scores).map(([label, value]) => ({ label, value }))
+    : DEFAULT_SKILLS;
+
   const maxR   = CENTER - 24;
   const step   = 360 / SKILLS.length;
   const points = buildPolygon(SKILLS.map((s) => s.value), maxR);
